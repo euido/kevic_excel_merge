@@ -155,33 +155,28 @@ class ExcelFormatterApp(QWidget):
             return
 
         try:
-            # 원본 데이터 읽기
             source_wb = load_workbook(self.file_path)
             source_ws = source_wb.active
 
-            # 대상 데이터 불러오기
             target_wb = load_workbook(self.target_file_path)
             target_ws = target_wb.active
 
-            # C열 데이터를 대상 E열의 8행부터 복사 (순차적으로 빈 줄 없이)
             target_row_e = 8
             for row in range(1, source_ws.max_row + 1):
                 value = source_ws.cell(row=row, column=3).value
-                if value:  # 값이 있는 경우에만 추가
+                if value:  
                     target_ws.cell(row=target_row_e, column=5).value = value
                     target_row_e += 1
 
-            # D열 데이터를 대상 M열의 8행부터 복사 (순차적으로 빈 줄 없이)
             target_row_m = 8
             for row in range(1, source_ws.max_row + 1):
                 value = source_ws.cell(row=row, column=4).value
-                if value:  # 값이 있는 경우에만 추가
+                if value:  
                     cell = target_ws.cell(row=target_row_m, column=13)
                     cell.value = value
                     cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
                     target_row_m += 1
 
-            # 저장
             target_wb.save(self.target_file_path)
             self.result_label.setText("데이터 복사가 완료되었습니다!")
 
