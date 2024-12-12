@@ -36,7 +36,7 @@ class ExcelFormatterApp(QWidget):
         self.layout.addWidget(self.target_file_button)
 
         self.copy_button = QPushButton('4. 자재실사 양식 데이터 저장')
-      #  self.copy_button.clicked.connect(self.copy_data_to_target_excel)
+        self.copy_button.clicked.connect(self.copy_data_to_target_excel)
         self.layout.addWidget(self.copy_button)
 
         self.result_label = QLabel('')
@@ -75,144 +75,180 @@ class ExcelFormatterApp(QWidget):
             self.result_label.setText(f"오류 발생: {e}")
 
     def update_original_file(self, df):
-            wb = load_workbook(self.file_path)
-            ws = wb.active
+        # Load workbook and get active sheet
+        wb = load_workbook(self.file_path)
+        ws = wb.active
 
-            current_start_row = None
-            current_value = None
-            merged_b_values = []
-            merged_c_values = []
-            merged_d_values = []
-            merged_e_values = []
-            merged_f_values = []
-            merged_g_values = []
+        current_start_row = None
+        current_value = None
+        merged_b_values = []
+        merged_c_values = []
+        merged_d_values = []
+        merged_e_values = []
+        merged_f_values = []
+        merged_g_values = []
+        merged_h_values = []  # Track merged values from column H
 
-            for index, row in df.iterrows():
-                a_value = row[0]  # A열 값
-                b_value = row[1]  # B열 값
-                c_value = row[2]  # C열 값
-                d_value = row[3]  # D열 값
-                e_value = row[4]  # E열 값
-                f_value = row[5]  # F열 값
-                g_value = row[6]  # G열 값
+        # Process each row in the DataFrame
+        for index, row in df.iterrows():
+            a_value = row[0]  # A열 값
+            b_value = row[1]  # B열 값
+            c_value = row[2]  # C열 값
+            d_value = row[3]  # D열 값
+            e_value = row[4]  # E열 값
+            f_value = row[5]  # F열 값
+            g_value = row[6]  # G열 값
+            h_value = row[7]  # H열 값
 
-                if pd.notna(a_value):
-                    if current_value is not None and current_start_row is not None:
-                        # 병합 코드
-                        ws.merge_cells(
-                            start_row=current_start_row,
-                            start_column=10,
-                            end_row=index,
-                            end_column=10,
-                        )
-                        ws.cell(row=current_start_row, column=10).value = current_value
-                        ws.cell(row=current_start_row, column=10).alignment = Alignment(
-                            horizontal="center", vertical="center"
-                        )
+            # Handle the case of row grouping by A열 value change
+            if pd.notna(a_value):
+                if current_value is not None and current_start_row is not None:
+                    # Merge cells as previously defined
+                    ws.merge_cells(
+                        start_row=current_start_row,
+                        start_column=10,
+                        end_row=index,
+                        end_column=10,
+                    )
+                    ws.cell(row=current_start_row, column=10).value = current_value
+                    ws.cell(row=current_start_row, column=10).alignment = Alignment(
+                        horizontal="center", vertical="center"
+                    )
 
-                        ws.merge_cells(
-                            start_row=current_start_row,
-                            start_column=11,
-                            end_row=index,
-                            end_column=11,
-                        )
-                        ws.cell(row=current_start_row, column=11).value = "\n".join(merged_b_values)
-                        ws.cell(row=current_start_row, column=11).alignment = Alignment(
-                            horizontal="center", vertical="center", wrap_text=True
-                        )
+                    # Repeat merging logic for other columns
+                    ws.merge_cells(
+                        start_row=current_start_row,
+                        start_column=11,
+                        end_row=index,
+                        end_column=11,
+                    )
+                    ws.cell(row=current_start_row, column=11).value = "\n".join(merged_b_values)
+                    ws.cell(row=current_start_row, column=11).alignment = Alignment(
+                        horizontal="center", vertical="center", wrap_text=True
+                    )
 
-                        ws.merge_cells(
-                            start_row=current_start_row,
-                            start_column=12,
-                            end_row=index,
-                            end_column=12,
-                        )
-                        ws.cell(row=current_start_row, column=12).value = "\n".join(merged_c_values)
-                        ws.cell(row=current_start_row, column=12).alignment = Alignment(
-                            horizontal="center", vertical="center", wrap_text=True
-                        )
+                    # Similarly for C, D, E, F, G
+                    ws.merge_cells(
+                        start_row=current_start_row,
+                        start_column=12,
+                        end_row=index,
+                        end_column=12,
+                    )
+                    ws.cell(row=current_start_row, column=12).value = "\n".join(merged_c_values)
+                    ws.cell(row=current_start_row, column=12).alignment = Alignment(
+                        horizontal="center", vertical="center", wrap_text=True
+                    )
 
-                        ws.merge_cells(
-                            start_row=current_start_row,
-                            start_column=13,
-                            end_row=index,
-                            end_column=13,
-                        )
-                        ws.cell(row=current_start_row, column=13).value = "\n".join(merged_d_values)
-                        ws.cell(row=current_start_row, column=13).alignment = Alignment(
-                            horizontal="center", vertical="center", wrap_text=True
-                        )
+                    ws.merge_cells(
+                        start_row=current_start_row,
+                        start_column=13,
+                        end_row=index,
+                        end_column=13,
+                    )
+                    ws.cell(row=current_start_row, column=13).value = "\n".join(merged_d_values)
+                    ws.cell(row=current_start_row, column=13).alignment = Alignment(
+                        horizontal="center", vertical="center", wrap_text=True
+                    )
 
-                        ws.merge_cells(
-                            start_row=current_start_row,
-                            start_column=14,
-                            end_row=index,
-                            end_column=14,
-                        )
-                        ws.cell(row=current_start_row, column=14).value = "\n".join(merged_e_values)
-                        ws.cell(row=current_start_row, column=14).alignment = Alignment(
-                            horizontal="center", vertical="center", wrap_text=True
-                        )
+                    ws.merge_cells(
+                        start_row=current_start_row,
+                        start_column=14,
+                        end_row=index,
+                        end_column=14,
+                    )
+                    ws.cell(row=current_start_row, column=14).value = "\n".join(merged_e_values)
+                    ws.cell(row=current_start_row, column=14).alignment = Alignment(
+                        horizontal="center", vertical="center", wrap_text=True
+                    )
 
-                        ws.merge_cells(
-                            start_row=current_start_row,
-                            start_column=15,
-                            end_row=index,
-                            end_column=15,
-                        )
-                        ws.cell(row=current_start_row, column=15).value = "\n".join(merged_f_values)
-                        ws.cell(row=current_start_row, column=15).alignment = Alignment(
-                            horizontal="center", vertical="center", wrap_text=True
-                        )
+                    ws.merge_cells(
+                        start_row=current_start_row,
+                        start_column=15,
+                        end_row=index,
+                        end_column=15,
+                    )
+                    ws.cell(row=current_start_row, column=15).value = "\n".join(merged_f_values)
+                    ws.cell(row=current_start_row, column=15).alignment = Alignment(
+                        horizontal="center", vertical="center", wrap_text=True
+                    )
 
-                        ws.merge_cells(
-                            start_row=current_start_row,
-                            start_column=16,
-                            end_row=index,
-                            end_column=16,
-                        )
-                        ws.cell(row=current_start_row, column=16).value = "\n".join(merged_g_values)
-                        ws.cell(row=current_start_row, column=16).alignment = Alignment(
-                            horizontal="center", vertical="center", wrap_text=True
-                        )
+                    ws.merge_cells(
+                        start_row=current_start_row,
+                        start_column=16,
+                        end_row=index,
+                        end_column=16,
+                    )
+                    ws.cell(row=current_start_row, column=16).value = "\n".join(merged_g_values)
+                    ws.cell(row=current_start_row, column=16).alignment = Alignment(
+                        horizontal="center", vertical="center", wrap_text=True
+                    )
 
-                    current_start_row = index + 1
-                    current_value = a_value
-                    merged_b_values = []
-                    merged_c_values = []
-                    merged_d_values = []
-                    merged_e_values = []
-                    merged_f_values = []
-                    merged_g_values = []
+                    # Handle merging H values
+                    ws.merge_cells(
+                        start_row=current_start_row,
+                        start_column=8,  # H열 index
+                        end_row=index,
+                        end_column=8,
+                    )
+                    ws.cell(row=current_start_row, column=8).value = "\n".join(merged_h_values)
+                    ws.cell(row=current_start_row, column=8).alignment = Alignment(
+                        horizontal="center", vertical="center", wrap_text=True
+                    )
 
-                if pd.notna(b_value):
-                    merged_b_values.append(str(b_value))
-                if pd.notna(c_value):
-                    merged_c_values.append(str(c_value))
-                if pd.notna(d_value):
-                    merged_d_values.append(str(d_value))
-                if pd.notna(e_value):
-                    merged_e_values.append(str(e_value))
-                if pd.notna(f_value):
-                    merged_f_values.append(str(f_value))
-                if pd.notna(g_value):
-                    merged_g_values.append(str(g_value))
+                    # Copy H values to Q
+                    ws.merge_cells(
+                        start_row=current_start_row,
+                        start_column=17,
+                        end_row=index,
+                        end_column=17,
+                    )
+                    ws.cell(row=current_start_row, column=17).value = "\n".join(merged_h_values)
+                    ws.cell(row=current_start_row, column=17).alignment = Alignment(
+                        horizontal="center", vertical="center", wrap_text=True
+                    )
 
-            # 마지막 병합 작업
-            if current_value is not None and current_start_row is not None:
-                ws.merge_cells(
-                    start_row=current_start_row,
-                    start_column=10,
-                    end_row=len(df),
-                    end_column=10,
-                )
-                ws.cell(row=current_start_row, column=10).value = current_value
-                ws.cell(row=current_start_row, column=10).alignment = Alignment(
-                    horizontal="center", vertical="center"
-                )
+                # Reset merged value buffers
+                current_start_row = index + 1
+                current_value = a_value
+                merged_b_values = []
+                merged_c_values = []
+                merged_d_values = []
+                merged_e_values = []
+                merged_f_values = []
+                merged_g_values = []
+                merged_h_values = []
 
-            wb.save(self.file_path)
-            self.result_label.setText("병합 및 저장 완료!")
+            if pd.notna(b_value):
+                merged_b_values.append(str(b_value))
+            if pd.notna(c_value):
+                merged_c_values.append(str(c_value))
+            if pd.notna(d_value):
+                merged_d_values.append(str(d_value))
+            if pd.notna(e_value):
+                merged_e_values.append(str(e_value))
+            if pd.notna(f_value):
+                merged_f_values.append(str(f_value))
+            if pd.notna(g_value):
+                merged_g_values.append(str(g_value))
+            if pd.notna(h_value):
+                merged_h_values.append(str(h_value))
+
+        # Final merge for the last row
+        if current_value is not None and current_start_row is not None:
+            ws.merge_cells(
+                start_row=current_start_row,
+                start_column=10,
+                end_row=len(df),
+                end_column=10,
+            )
+            ws.cell(row=current_start_row, column=10).value = current_value
+            ws.cell(row=current_start_row, column=10).alignment = Alignment(
+                horizontal="center", vertical="center"
+            )
+
+        # Save the workbook
+        wb.save(self.file_path)
+        self.result_label.setText("병합 및 저장 완료!")
     
     def copy_data_to_target_excel(self):
         if not self.file_path or not self.target_file_path:
@@ -220,31 +256,69 @@ class ExcelFormatterApp(QWidget):
             return
 
         try:
+            # Load source workbook
             source_wb = load_workbook(self.file_path)
             source_ws = source_wb.active
 
+            # Load target workbook
             target_wb = load_workbook(self.target_file_path)
             target_ws = target_wb.active
 
-            target_row_e = 8
-            for row in range(1, source_ws.max_row + 1):
-                value = source_ws.cell(row=row, column=3).value
-                if value:  
-                    target_ws.cell(row=target_row_e, column=5).value = value
-                    target_row_e += 1
+            # Define starting rows for each target range
+            target_row_b = 8  # B8부터 시작
+            target_row_c = 8  # C8부터 시작
+            target_row_i = 8  # I8, K8
+            target_row_m = 8  # M8부터
+            target_row_d = 8  # D8부터
+            target_row_e = 8  # E8부터
 
-            target_row_m = 8
-            for row in range(1, source_ws.max_row + 1):
-                value = source_ws.cell(row=row, column=4).value
-                if value:  
-                    cell = target_ws.cell(row=target_row_m, column=13)
-                    cell.value = value
-                    cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+            # Copy J열 (J2부터 끝까지) → B8부터
+            for row in range(2, source_ws.max_row + 1):
+                value = source_ws.cell(row=row, column=10).value  # Read from J열
+                if value:
+                    target_ws.cell(row=target_row_b, column=2).value = value  # Write to B열
+                    target_row_b += 1
+
+            # Copy K열 (K2부터 끝까지) → C8부터
+            for row in range(2, source_ws.max_row + 1):
+                value = source_ws.cell(row=row, column=11).value  # Read from K열
+                if value:
+                    target_ws.cell(row=target_row_c, column=3).value = value  # Write to C열
+                    target_row_c += 1
+
+            # Copy Q열 (Q2부터 끝까지) → I8와 K8
+            for row in range(2, source_ws.max_row + 1):
+                value = source_ws.cell(row=row, column=17).value  # Read Q열
+                if value:
+                    target_ws.cell(row=target_row_i, column=9).value = value  # I열
+                    target_ws.cell(row=target_row_i, column=11).value = value  # K열
+                    target_row_i += 1
+
+            # Copy P열 (P2부터 끝까지) → M8부터
+            for row in range(2, source_ws.max_row + 1):
+                value = source_ws.cell(row=row, column=16).value  # Read from P열
+                if value:
+                    target_ws.cell(row=target_row_m, column=13).value = value  # Write to M열
                     target_row_m += 1
 
+            # Copy L열 (L2부터 끝까지) → D8부터
+            for row in range(2, source_ws.max_row + 1):
+                value = source_ws.cell(row=row, column=12).value  # Read L열
+                if value:
+                    target_ws.cell(row=target_row_d, column=4).value = value  # Write to D열
+                    target_row_d += 1
+
+            # Copy M열 (M2부터 끝까지) → E8부터
+            for row in range(2, source_ws.max_row + 1):
+                value = source_ws.cell(row=row, column=13).value  # Read M열
+                if value:
+                    target_ws.cell(row=target_row_e, column=5).value = value  # Write to E열
+                    target_row_e += 1
+
+            # Save the updated target workbook
             target_wb.save(self.target_file_path)
             self.result_label.setText("데이터 복사가 완료되었습니다!")
-
+            
         except Exception as e:
             self.result_label.setText(f"오류 발생: {e}")
 
