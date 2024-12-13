@@ -6,7 +6,7 @@ from PyQt5.QtCore import QThread, pyqtSignal
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QPushButton, QFileDialog, QLabel
 )
-
+#pyinstaller -w -F kevic_excel_merge.py
 class FormatExcelThread(QThread):
     progress = pyqtSignal(str)
 
@@ -185,7 +185,7 @@ class ExcelFormatterApp(QWidget):
         self.initUI()
 
     def initUI(self):
-        self.setWindowTitle('KEVIC 현황표')
+        self.setWindowTitle('KEVIC 현황표 Ver1.0.0')
         self.setGeometry(300, 300, 400, 300)
 
         self.layout = QVBoxLayout()
