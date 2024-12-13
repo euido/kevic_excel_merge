@@ -46,11 +46,35 @@ class ProcessThread(QThread):
             match_count = 0  
             # B8부터 시작하여 범위 내 숫자가 있는지 확인
             for row in range(8, file_a_sheet.max_row + 1):
-                b_value = file_a_sheet.cell(row=row, column=2).value  # B열 값 확인
-                if b_value is None:
-                    continue  # 빈 셀은 무시
-                print(f"[DEBUG] Scanning Row {row}: B value = {b_value}")
-                self.progress.emit(f"Scanning B{row}: Value = {b_value}")
+                # Extract values from the required columns
+                b_value = file_a_sheet.cell(row=row, column=2).value  # B열
+                c_value = file_a_sheet.cell(row=row, column=3).value  # C열
+                d_value = file_a_sheet.cell(row=row, column=4).value  # D열
+                e_value = file_a_sheet.cell(row=row, column=5).value  # E열
+                i_value = file_a_sheet.cell(row=row, column=9).value  # I열
+                k_value = file_a_sheet.cell(row=row, column=11).value  # K열
+                m_value = file_a_sheet.cell(row=row, column=13).value  # M열
+
+                # Log to debugging console
+                if b_value is not None:
+                    print(f"[DEBUG] Scanning Row {row}: B = {b_value}")
+                if c_value is not None:
+                    print(f"[DEBUG] Scanning Row {row}: C = {c_value}")
+                if d_value is not None:
+                    print(f"[DEBUG] Scanning Row {row}: D = {d_value}")
+                if e_value is not None:
+                    print(f"[DEBUG] Scanning Row {row}: E = {e_value}")
+                if i_value is not None:
+                    print(f"[DEBUG] Scanning Row {row}: I = {i_value}")
+                if k_value is not None:
+                    print(f"[DEBUG] Scanning Row {row}: K = {k_value}")
+                if m_value is not None:
+                    print(f"[DEBUG] Scanning Row {row}: M = {m_value}")
+
+                # Perform search logic (matching user criteria)
+                if any(val in self.search_values for val in [b_value, c_value, d_value, e_value, i_value, k_value, m_value]):
+                    print(f"[DEBUG] Found match at Row {row}")
+                    match_count += 1
 
                 # 다중 값 확인
                 if b_value in self.search_values:
